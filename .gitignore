@@ -1,0 +1,5 @@
+*.zip
+netflix/*
+movielens/*
+*.ipynb_checkpoints
+*.ipynb_checkpoints/*
