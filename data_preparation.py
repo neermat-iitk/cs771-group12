@@ -1,8 +1,5 @@
-## In this script, we explore the dataset Movielens
-import os
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 
 print('| Dataset: {}'.format('Movielens'))
 print('')
@@ -51,16 +48,12 @@ Ntrain = int(len(sample_perm)*0.8)
 train_rating = rating.iloc[sample_perm[:Ntrain]]
 test_rating = rating.iloc[sample_perm[Ntrain:]]
 Npos = (train_rating['implicit'].sum())
+print('')
 print('| Total no. of 5-ratings in train set: {}/{} ({:.2f}%)'.format(
     Npos , train_rating.shape[0], Npos*100.0/train_rating.shape[0] ))
 Npos = (test_rating['implicit'].sum())
 print('| Total no. of 5-ratings in test set: {}/{} ({:.2f}%)'.format(
     Npos , test_rating.shape[0], Npos*100.0/test_rating.shape[0] ))
 
-train_rating.to_csv('train_rating_100k.csv', index=None)
-test_rating.to_csv('test_rating_100k.csv', index=None)
-
-train_df = pd.read_csv('train_rating_100k.csv')
-print(train_df)
-
-
+train_rating.to_csv('movielens/train_rating_100k.csv', index=None)
+test_rating.to_csv('movielens/test_rating_100k.csv', index=None)
