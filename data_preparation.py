@@ -1,5 +1,7 @@
+import os
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 print('| Dataset: {}'.format('Movielens'))
 print('')
@@ -23,37 +25,53 @@ print('| Total no. of genres: {}'.format(len(genres_unq)))
 print('| Genres: {}'.format(genres_unq))
 
 # Ratings
-downsample = True
-sample_size = 100000
+downsample = True 
+sample_size = 5000000
 if downsample:
     rating = pd.read_csv('movielens/rating.csv').sample(n=sample_size)
 else:
     rating = pd.read_csv('movielens/rating.csv')
 
-# Implicitize the ratings
-rating['implicit'] = (rating['rating'] == 5.0).astype(int)
+# Data cleaning 
+print('')
+print('| Data Cleaning')
+print('| Total interactions: {}'.format(rating.shape[0]))
+rating = rating[rating['rating'] == 5.0]
+rating['rating'] = 1
+print('| Total interactions with 5 rating: {}'.format(rating.shape[0]))
+# rating['rating'] = (rating['rating'] == 5.0).astype(int)
+
+# Filter movies: # users rated >= some thresh
+movie_thresh = 20
+nInts_by_movie = rating.groupby('movieId')['rating'].size()
+movieId_ftrd = pd.DataFrame(nInts_by_movie[nInts_by_movie>= movie_thresh].index)
+
+# Filter users: # movies rated >= some thresh
+user_thresh = 20
+nInts_by_user = rating.groupby('userId')['rating'].size()
+userId_ftrd = pd.DataFrame(nInts_by_user[nInts_by_user>= user_thresh].index)
 
 # Filter
-rating = pd.merge(rating[['movieId', 'userId', 'implicit']], movie[['movieId']], how='inner')
+rating = pd.merge(rating[['movieId', 'userId', 'rating']], movieId_ftrd, how='inner')
+print('| Total interactions after removing movies with low interactions: {}'.format(rating.shape[0]))
+rating = pd.merge(rating, userId_ftrd)
+print('| Total interactions after removing users with low interactions: {}'.format(rating.shape[0]))
 print('')
 print('| Total no. of movies: {}'.format(len(rating['movieId'].unique())))
 print('| Total no. of users: {}'.format(len(rating['userId'].unique())))
-n_5ratings = (rating['implicit'].sum())
-print('| Total no. of 5-ratings: {}/{} ({:.2f}%)'.format(
-    n_5ratings, rating.shape[0], n_5ratings*100.0/rating.shape[0] ))
+
 
 # Split train and test sets
+np.random.seed(1234)
 sample_perm = np.random.permutation(rating.shape[0])
 Ntrain = int(len(sample_perm)*0.8)
 train_rating = rating.iloc[sample_perm[:Ntrain]]
 test_rating = rating.iloc[sample_perm[Ntrain:]]
-Npos = (train_rating['implicit'].sum())
-print('')
-print('| Total no. of 5-ratings in train set: {}/{} ({:.2f}%)'.format(
-    Npos , train_rating.shape[0], Npos*100.0/train_rating.shape[0] ))
-Npos = (test_rating['implicit'].sum())
-print('| Total no. of 5-ratings in test set: {}/{} ({:.2f}%)'.format(
-    Npos , test_rating.shape[0], Npos*100.0/test_rating.shape[0] ))
 
-train_rating.to_csv('movielens/train_rating_100k.csv', index=None)
-test_rating.to_csv('movielens/test_rating_100k.csv', index=None)
+# Save train and test data 
+if not os.path.exists('cache'):
+    os.makedirs('cache')
+movieId_ftrd = pd.merge(movie, movieId_ftrd, how='inner')
+movieId_ftrd.to_csv('cache/movieId_ftrd.csv', index=None)
+train_rating.to_csv('cache/train_rating.csv', index=None)
+test_rating.to_csv('cache/test_rating.csv', index=None)
