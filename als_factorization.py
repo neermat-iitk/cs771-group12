@@ -41,9 +41,8 @@ def als(X, k=20, lam=0.1, max_iter=10):
                     np.dot(P_.T, X_)).squeeze()
     return P, Q
 
+# Cache latent factors
 fname = 'cache/latentm_{}.pkl'.format(args.idf)
-print(fname)
-exit()
 if not os.path.exists(fname):
     latentm = {}
     latentm['P'], latentm['Q'] = als(X_train)
