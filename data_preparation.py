@@ -42,24 +42,30 @@ rating['rating'] = 1
 print('| Total interactions with 5 rating: {}'.format(rating.shape[0]))
 # rating['rating'] = (rating['rating'] == 5.0).astype(int)
 
+
+
 # Filter movies: # users rated >= some thresh
-movie_thresh = 20
+movie_thresh = 100
 nInts_by_movie = rating.groupby('movieId')['rating'].size()
 movieId_ftrd = pd.DataFrame(nInts_by_movie[nInts_by_movie>= movie_thresh].index)
+rating = pd.merge(rating[['userId', 'movieId', 'rating']], movieId_ftrd, how='inner')
+print('| Total interactions after removing movies with low interactions: {}'.format(rating.shape[0]))
 
 # Filter users: # movies rated >= some thresh
-user_thresh = 20
+user_thresh = 10
 nInts_by_user = rating.groupby('userId')['rating'].size()
 userId_ftrd = pd.DataFrame(nInts_by_user[nInts_by_user>= user_thresh].index)
-
-# Filter
-rating = pd.merge(rating[['movieId', 'userId', 'rating']], movieId_ftrd, how='inner')
-print('| Total interactions after removing movies with low interactions: {}'.format(rating.shape[0]))
 rating = pd.merge(rating, userId_ftrd)
 print('| Total interactions after removing users with low interactions: {}'.format(rating.shape[0]))
+
+# Filter
 print('')
 print('| Total no. of movies: {}'.format(len(rating['movieId'].unique())))
 print('| Total no. of users: {}'.format(len(rating['userId'].unique())))
+print('| Min. no. of users a movie has been rated by: {}'.format(
+    rating.groupby('movieId')['rating'].size().min()))
+print('| Min. no. of movies a user has rated : {}'.format(
+    rating.groupby('userId')['rating'].size().min()))
 
 # Split train and test sets
 np.random.seed(321)
@@ -79,7 +85,10 @@ print(test_rating['userId'].unique().shape)
 # Save train and test data 
 if not os.path.exists('cache'):
     os.makedirs('cache')
-movieId_ftrd = pd.merge(movie, movieId_ftrd, how='inner')
+userId_ftrd = pd.DataFrame({'userId': np.sort(rating['userId'].unique())})
+movieId_ftrd = pd.DataFrame({'movieId': np.sort(rating['movieId'].unique())})
+movieId_ftrd = movieId_ftrd.merge(movie, how='inner')
 movieId_ftrd.to_csv('cache/movieId_ftrd.csv', index=None)
+userId_ftrd.to_csv('cache/userId_ftrd.csv', index=None)
 train_rating.to_csv('cache/train_rating.csv', index=None)
 test_rating.to_csv('cache/test_rating.csv', index=None)

@@ -26,7 +26,7 @@ X.fillna(0, inplace=True)
 X = sparse.csr_matrix(X.values)
 
 # Factorize using ALS
-def als(X, k=20, lam=0.1, alpha=40, num_iters=10):
+def als(X, k=20, lam=0.1, alpha=40.0, num_iters=10):
     n, m = X.shape
     print('| users: {}, items: {}'.format(n, m))
 
