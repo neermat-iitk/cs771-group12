@@ -24,11 +24,12 @@ print('')
 print('| Total no. of genres: {}'.format(len(genres_unq)))
 print('| Genres: {}'.format(genres_unq))
 
+
 # Ratings
 downsample = True 
 sample_size = 5000000
 if downsample:
-    rating = pd.read_csv('movielens/rating.csv').sample(n=sample_size)
+    rating = pd.read_csv('movielens/rating.csv').sample(n=sample_size, random_state=1234)
 else:
     rating = pd.read_csv('movielens/rating.csv')
 
@@ -60,13 +61,20 @@ print('')
 print('| Total no. of movies: {}'.format(len(rating['movieId'].unique())))
 print('| Total no. of users: {}'.format(len(rating['userId'].unique())))
 
-
 # Split train and test sets
-np.random.seed(1234)
+np.random.seed(321)
 sample_perm = np.random.permutation(rating.shape[0])
 Ntrain = int(len(sample_perm)*0.8)
 train_rating = rating.iloc[sample_perm[:Ntrain]]
 test_rating = rating.iloc[sample_perm[Ntrain:]]
+
+# Check if train ratings has all the users and movies
+print(rating['movieId'].unique().shape)
+print(train_rating['movieId'].unique().shape)
+print(test_rating['movieId'].unique().shape)
+print(rating['userId'].unique().shape)
+print(train_rating['userId'].unique().shape)
+print(test_rating['userId'].unique().shape)
 
 # Save train and test data 
 if not os.path.exists('cache'):
