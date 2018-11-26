@@ -13,9 +13,9 @@ from scipy.sparse.linalg import spsolve
 parser = argparse.ArgumentParser(description='Matrix Factorization.')
 parser.add_argument('--idf', default='id0', help='identifier')
 parser.add_argument('--k', default=20, help='no. of latent features', type=int)
-parser.add_argument('--lam', default=0.10, help='lambda', type=float)
+parser.add_argument('--lam', default=500.0, help='lambda', type=float)
 parser.add_argument('--alpha', default=40.0, help='alpha', type=float)
-parser.add_argument('--niters', default=10, help='no. of iterations', type=float)
+parser.add_argument('--niters', default=10, help='no. of iterations', type=int)
 args = parser.parse_args()
 
 # Load training data

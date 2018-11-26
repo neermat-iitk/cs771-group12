@@ -8,6 +8,9 @@ import argparse
 parser = argparse.ArgumentParser(description='Evaluating Matrix Factorization Model.')
 parser.add_argument('--idf', default='id0', help='identifier')
 
+# Set rand=True to evaluate for the random baseline
+rand=False
+
 args = parser.parse_args()
 
 # Load latent matrices
@@ -47,6 +50,7 @@ K = 20
 ndcg_at_K = np.zeros((len(test_rating),))
 discount_K = 1/np.log2(np.arange(1, K+1) + 1)
 ndisp = 10000
+
 for idx, row in test_rating.iterrows():
     if idx%ndisp==0:
         print('| Evaluating {}-{}/{} test interactions...'.format(
@@ -65,14 +69,18 @@ for idx, row in test_rating.iterrows():
     mask = get_movie_liked_mask(row['userId'])
     user_pref = ~mask*user_pref
 
-    # Pick topN list
-    sort_idx = np.argsort(user_pref)[::-1][:K]
-    j = np.where(mId == sort_idx)[0]
+    if rand:
+        # Random baseline
+        sort_idx = np.random.choice(np.where(~mask)[0], size=K, replace=False)
+    else:
+        # Pick topN list
+        sort_idx = np.argsort(user_pref)[::-1][:K]
 
+    j = np.where(mId == sort_idx)[0]
     if j.size > 0:
         ndcg_at_K[idx] = discount_K[j]
 
-print(ndcg_at_K.min(), ndcg_at_K.max(), ndcg_at_K.mean())
+print('| NDCG@20: {}'.format(ndcg_at_K.mean()))
 
     
     
