@@ -82,34 +82,3 @@ for idx, row in test_rating.iterrows():
 
 print('| NDCG@20: {}'.format(ndcg_at_K.mean()))
 
-    
-    
-
-# # Pick a user
-# userId = user.loc[args.uId].values[0]
-# uId = np.where(user['userId'] == userId)[0][0]
-
-# # Movies liked by the user
-# movies_liked = (train_rating[train_rating['userId']==userId])['movieId'].values
-# all_movie_ids = movie['movieId'].values
-# movies_liked_idx = np.any(movies_liked == all_movie_ids[:,None], axis=-1)
-# print('-----------'*10)
-# print('|    Movies liked by the user:'.format())
-# print('-----------'*10)
-# print(movie.iloc[movies_liked_idx])
-
-# # Estimate the preference by the user
-# user_vec = P[uId, :]
-# # pref = user_vec.dot(Q.T)
-# pref = user_vec.dot(Q.T)
-# pref = pref*(1-movies_liked_idx)
-# print(pref.shape)
-# sort_idx = np.argsort(pref)[::-1][:10]
-# print('')
-# print('-----------'*10)
-# print('|   Movies recommended for the user:'.format())
-# print('-----------'*10)
-# top_recs = movie.iloc[sort_idx].copy()
-# top_recs['score'] = pref[sort_idx]
-# print(top_recs)
-
