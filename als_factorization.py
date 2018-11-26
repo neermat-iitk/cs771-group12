@@ -12,6 +12,10 @@ from scipy.sparse.linalg import spsolve
 # Parse command line arguments 
 parser = argparse.ArgumentParser(description='Matrix Factorization.')
 parser.add_argument('--idf', default='id0', help='identifier')
+parser.add_argument('--k', default=20, help='no. of latent features', type=int)
+parser.add_argument('--lam', default=0.10, help='lambda', type=float)
+parser.add_argument('--alpha', default=40.0, help='alpha', type=float)
+parser.add_argument('--niters', default=10, help='no. of iterations', type=float)
 args = parser.parse_args()
 
 # Load training data
@@ -85,7 +89,11 @@ def als(X, k=20, lam=0.1, alpha=40.0, num_iters=10):
 fname = 'cache/latentm_{}.pkl'.format(args.idf)
 if not os.path.exists(fname):
     latentm = {}
-    latentm['P'], latentm['Q'] = als(X)
+    latentm['P'], latentm['Q'] = als(X,
+            k=args.k,
+            lam=args.lam,
+            alpha=args.alpha,
+            num_iters=args.niters)
     if not os.path.exists('cache'):
         os.makedirs('cache')
     f = open(fname, 'wb')

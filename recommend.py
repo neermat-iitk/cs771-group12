@@ -7,7 +7,7 @@ import argparse
 # Parse command line arguments 
 parser = argparse.ArgumentParser(description='Evaluating Matrix Factorization Model.')
 parser.add_argument('--idf', default='id0', help='identifier')
-parser.add_argument('--uId', default=90, help='movie ID', type=int)
+parser.add_argument('--uId', default=90, help='user ID', type=int)
 
 args = parser.parse_args()
 
