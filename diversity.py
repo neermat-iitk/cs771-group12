@@ -81,8 +81,11 @@ for idx, userId in enumerate(test_users):
     else:
         # Pick top_K list
         sort_idx = np.argsort(user_pref)[::-1][:K]
-    jacEILD_at_k[idx] = (jaccard_dist[sort_idx, :][:, sort_idx]).mean()
-    cosEILD_at_k[idx] = (cosine_dist[sort_idx, :][:, sort_idx]).mean()
+    jac_mat = jaccard_dist[sort_idx, :][:, sort_idx]
+    cos_mat = cosine_dist[sort_idx, :][:, sort_idx]
+    jacEILD_at_k[idx] = jac_mat.sum()/(K*(K-1))
+    cosEILD_at_k[idx] = cos_mat.sum()/(K*(K-1))
+    # cosEILD_at_k[idx] = .mean()
     # print((jaccard_dist[sort_idx, :][:, sort_idx]).shape)
 
 print('| EILD@20 (jaccard): {}, {}, {}'.format(jacEILD_at_k.mean(), jacEILD_at_k.min(), jacEILD_at_k.max()))

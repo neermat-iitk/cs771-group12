@@ -23,6 +23,7 @@ vectorizer = CountVectorizer(
         tokenizer=None,
         binary=True
         )
+
 X = vectorizer.fit_transform(df['genres']).toarray() # nMovies x nGenres
 
 # Compute intersection

@@ -41,6 +41,7 @@ def get_movie_liked_mask(userId):
 # Load test data
 test_rating = pd.read_csv('cache/test_rating.csv')
 test_rating = test_rating[['userId', 'movieId']]
+print(test_rating.shape)
 
 # Load train data
 train_rating = pd.read_csv('cache/train_rating.csv')
@@ -57,6 +58,7 @@ for idx, row in test_rating.iterrows():
             idx, idx+ndisp, len(test_rating)))
 
     #TODO precompute the following mapping
+    #TODO ndcg normalization does not seem correct -- rewrite
     # new indices 
     uId = get_new_userId(row['userId'])
     mId = get_new_movieId(row['movieId'])

@@ -6,7 +6,7 @@ import argparse
 
 # Parse command line arguments 
 parser = argparse.ArgumentParser(description='Evaluating Matrix Factorization Model.')
-parser.add_argument('--idf', default='id0', help='identifier')
+parser.add_argument('--idf', default='lam_400', help='identifier')
 parser.add_argument('--mId', default=90, help='movie ID', type=int)
 
 args = parser.parse_args()
@@ -46,4 +46,5 @@ for idx in top_10:
     movie_scores.append(scores[idx])
 
 similar = pd.DataFrame({'movies': sim_movies, 'genres': movie_genres,'score': movie_scores} )
+similar.to_csv('sim_movies_{}.csv'.format(movieId))
 print(similar)
